@@ -16,7 +16,6 @@ mutable struct RTEMatpowerGenerator <: AbstractNodeLabel
   power_max::Complex #Smax = Pmax + i Qmax
   active_power_input::Float64
   gen_status::Bool
-  flag::String
 end
 
 
@@ -29,7 +28,6 @@ Return nothing
 """
 function create_vars!(element::T, bus::String, elemid::String, elem_formulation::Symbol, bus_vars::SortedDict{String, Variable}, scenario::String) where T <: RTEMatpowerGenerator
     bus_vars[elemid] = Variable(variable_name("Sgen", bus, elemid, scenario), Complex)
-    sign = element.flag
     #bus_vars["lambda_$(sign)"] = Variable("lambda_$(sign)", Real)
   return
 end
@@ -69,19 +67,8 @@ function constraint(element::T, busid::String, elemid::String, elem_formulation:
       Qmin = Qmax = 0
     end
     active_power = 0.5*(bus_vars[elemid]+conj(bus_vars[elemid]))
-    sign = element.flag
-    # lambda = bus_vars["lambda_$(sign)"]
-    if sign == "minus"
-      return SortedDict{String, Constraint}( "Reactivepower" => Qmin << reactive_power << Qmax#=,
-      "Activepower" => -active_power + Pmin+2*(Pinput-Pmin)*lambda == 0,
-      "ctr_lambda_$(sign)" => 0 << lambda << 0.5=#)
-    elseif sign == "plus"
-      return SortedDict{String, Constraint}( "Reactivepower" => Qmin << reactive_power << Qmax#=,
-      "Activepower" => -active_power + 2*Pinput-Pmax+2*(Pmax-Pinput)*lambda == 0,
-      "ctr_lambda_$(sign)"=> 0.5 << lambda << 1=#)
-    else
-      exit("Probem with flag")
-    end
+    return SortedDict{String, Constraint}( "Reactivepower" => Qmin << reactive_power << Qmax)
+
 end
 
 

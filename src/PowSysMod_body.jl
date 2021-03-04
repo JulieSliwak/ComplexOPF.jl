@@ -178,8 +178,6 @@ const OPFProblems = SortedDict{String, Scenario}
 # files to include for each entry type
 include(joinpath("src_GOC","GOC_files.jl"))
 include(joinpath("src_Matpower","Matpower_files.jl"))
-include(joinpath("src_IIDM","IIDM_files.jl"))
-include(joinpath("src_chordalext","chordalext_files.jl"))
 include(joinpath("src_MatpowerROPF","Matpower_files.jl"))
 include(joinpath("src_MatpowerROPF_RTE","Matpower_files.jl"))
 

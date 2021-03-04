@@ -7,7 +7,7 @@ abstract type MatpowerRTEROPFSimpleInput <: AbstractInput end
 Read instance in `instance_path` depending on `input_type`.\n
 Return a structure OPFProblems.
 """
-function read_input(input_type::T, instance_path::String, flag::String) where T<:Type{MatpowerRTEROPFSimpleInput}
+function read_input(input_type::T, instance_path::String) where T<:Type{MatpowerRTEROPFSimpleInput}
   data = load_matpower(instance_path)
   # DataStructure and Gridstructure data:
   bus = SortedDict{String, SortedDict{String, Any}}()
@@ -81,16 +81,16 @@ function read_input(input_type::T, instance_path::String, flag::String) where T<
     Pinput = 0.5*(real(S_min) + real(S_max))
     # Pinput += data[i,2]
     dict_Pinput["Gen_Sgen_$(bus_id_line[data[i, 1]])_Re"] = (Pinput, real(S_min), real(S_max))
-    bus[busname]["Gen"] = RTEMatpowerGenerator(S_min, S_max, Pinput, true, flag)
+    bus[busname]["Gen"] = RTEMatpowerGenerator(S_min, S_max, Pinput, true)
   end
-  f = open("D:\\repo\\data\\data_ROPF\\RTE_ROPFu\\$(instance)_generation1.csv", "w")
-  for (gen_name, tuple) in dict_Pinput
-    Pinput = tuple[1]
-    Pmin = tuple[2]
-    Pmax = tuple[3]
-    write(f, "$(gen_name) ; $Pinput ; ; $(Pmin) ; $(Pmax) \n")
-  end
-  close(f)
+  # f = open("D:\\repo\\data\\data_ROPF\\RTE_ROPFu\\$(instance)_generation1.csv", "w")
+  # for (gen_name, tuple) in dict_Pinput
+  #   Pinput = tuple[1]
+  #   Pmin = tuple[2]
+  #   Pmax = tuple[3]
+  #   write(f, "$(gen_name) ; $Pinput ; ; $(Pmin) ; $(Pmax) \n")
+  # end
+  # close(f)
 
   ## building link information
   i_debut, i_fin = find_numarray(i_fin+1, data)
